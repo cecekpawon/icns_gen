@@ -8,6 +8,7 @@ repository = "https://github.com/bubio/icns_gen.git"
 
 [tool.poetry.dependencies]
 python = "^3.9"
+Pillow = "^8.1.1" 
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
