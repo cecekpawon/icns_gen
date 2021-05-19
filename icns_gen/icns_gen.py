@@ -2,6 +2,7 @@ import os
 import glob
 from PIL import Image
 import io
+import re
 
 # icon_typeを返します
 def get_icon_type(width: int, is_scale2x: bool):
@@ -37,6 +38,13 @@ def get_icon_type(width: int, is_scale2x: bool):
 
     return icon_type
 
+# https://stackoverflow.com/a/62941534
+file_pattern = re.compile(r".*?(\d+).*?")
+def get_order(file):
+    match = file_pattern.match(os.path.basename(file))
+    if not match:
+        return math.inf
+    return int(match.groups()[0])
 
 # 複数のpngファイルから、icnsファイルを作成します
 def icns_gen(input_folder: str, output: str = None):
@@ -79,7 +87,7 @@ def icns_gen(input_folder: str, output: str = None):
     icns_data = b""
     size_all = 0
 
-    files = glob.glob(os.path.join(input_folder, "*.png"))
+    files = sorted(glob.glob(os.path.join(input_folder, "*.png")), key=get_order)
     for file in files:
         print(file)
         img = Image.open(file)
@@ -90,7 +98,7 @@ def icns_gen(input_folder: str, output: str = None):
         if icon_type == None:
             continue
         else:
-            print(icon_type)
+            print(icon_type.decode("ASCII"))
         icns_data = icns_data + icon_type
 
         # 実データを追加
